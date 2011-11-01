@@ -1,0 +1,14 @@
+{
+  "name": "Twashboard",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "everyauth": "0.2.x",
+    "express": "2.5.x",
+    "jade": "0.15.x",
+    "redis": "0.6.x",
+    "twitter-js": "0.1.x",
+    "socket.io": "0.8.x",
+    "underscore": "1.2.x"
+  }
+}

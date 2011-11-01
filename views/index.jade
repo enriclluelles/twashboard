@@ -1,0 +1,9 @@
+| Hi! What's up?
+-if (full_name)
+  p Your name is #{full_name} and you got #{followers} followers on Twitter
+  p
+    a(href="/logout") logout
+-else
+  p Go 
+    a(href="/auth/twitter") here
+    |  to see some twitter stats
