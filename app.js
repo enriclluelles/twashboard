@@ -15,7 +15,7 @@ everyauth.twitter
 .consumerSecret(tc.secret)
 .callbackPath("/auth/twitter/callback")
 .findOrCreateUser(function (session, accessToken, accessTokenSecret, metadata) {
-  user = new User(metadata);
+  user = User.createUser(metadata);
   user.setAccessToken(accessToken, accessTokenSecret);
   user.getFollowers();
   return metadata;

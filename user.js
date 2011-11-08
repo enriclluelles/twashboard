@@ -4,13 +4,7 @@ redis = require("redis").createClient(),
 _ = require("underscore")._,
 util = require("util");
 
-module.exports = User;
-
 User = {
-
-  retrieveUser: function(id) {
-
-  }
 
   createUser: function(twitter_metadata) {
     var that;
@@ -43,9 +37,9 @@ User = {
         var ids = _(id_groups).flatten();
         var key = "followers:" + that.screen_name;
         var dodiff = false;
-        redis.exists(key, function (error, value) {
+        writeSet(key, ids);
+        redis.exists('old' + key, function (error, value) {
           if (!error && value === 1) {
-            redis.renamenx(key, "old" + key);
             writeSet(key, ids);
             redis.sdiff(key, "old" + key, function (error, values) {
               if (!error && values.length > 0){
@@ -57,10 +51,9 @@ User = {
                 addDiff('-', values);
               }
             });
-            redis.del("old" + key);
           }
         });
-        writeSet(key, ids);
+        redis.rename(key, "old" + key);
       }
 
       function askForFollowers(cursor) {
@@ -95,3 +88,5 @@ User = {
     return that;
   }
 }
+
+module.exports = User;
