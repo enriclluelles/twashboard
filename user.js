@@ -1,6 +1,7 @@
-var tc = require("./credentials").twitter;
+var tc = require("./credentials").twitter,
 twitter = require("twitter-js")(tc.key, tc.secret),
 redis = require("redis").createClient(),
+events = require("events")
 _ = require("underscore"),
 util = require("util");
 
@@ -15,7 +16,7 @@ function addDiff(key, type, diff) {
 }
 
 function followerIds(screen_name, cb) {
-  var key = 'oldfollowers' + screen_name;
+  var key = 'oldfollowers:' + screen_name;
   redis.exists(key, function (error, value) {
     if (!error) {
       redis.smembers(key, function (error, values) {
@@ -98,7 +99,18 @@ User.prototype.store = function () {
       redis.hset(key, p, this[p]);
     }
   }
+  if (this.uid && this.screen_name) {
+    redis.set("ids:" + this.uid, this.screen_name);
+  }
 };
+
+User.prototype.followerIds = function () {
+  var that = this;
+  followerIds(this.screen_name, function(values){
+    var ff = new FollowerFetcher();
+    ff.fetch(values, that.getTokenPair());
+  })
+}
 
 User.prototype.getFollowers = function() {
   var that = this;
@@ -110,7 +122,8 @@ User.prototype.getFollowers = function() {
   function askForFollowers(cursor) {
     var nextBatch;
     cursor = cursor || -1;
-    twitter.apiCall('GET', '/followers/ids.json', {cursor: cursor, screen_name: that.screen_name, token: that.accessToken},  function (error, d){
+    twitter.apiCall('GET', '/followers/ids.json', {cursor: cursor, screen_name: that.screen_name, token: that.getTokenPair()},  function (error, d){
+      console.log(that.getTokenPair());
       if (error)
         console.log(util.inspect(error));
       if (d) {
@@ -126,22 +139,13 @@ User.prototype.getFollowers = function() {
     });
   }
 
-  if (that.accessToken) {
+  if (that.getTokenPair()) {
     askForFollowers();
   }
 }
 
 function lookUpUsers(ids, token) {
-  var times = ids.length;
-  var range;
-  var accessToken = this.accessToken || token;
 
-  for (var i = 0; i < times; i += 99) {
-    range = ids.slice(i, i + 99);
-    twitter.apiCall('GET', '/users/lookup', {screen_name: range, token: accessToken},  function (error, data) {
-      //TODO: implement
-    });
-  }
 }
 
 function getUser(username, cb) {
@@ -156,10 +160,31 @@ function getUser(username, cb) {
   });
 }
 
-function followers
+function FollowerFetcher() {
+  this.fetch = function (ids, token) {
+    var times = ids.length;
+    var range;
+    var accessToken = this.accessToken || token;
+    var that = this;
+
+    for (var i = 0; i < times; i += 99) {
+      range = ids.slice(i, i + 99);
+      twitter.apiCall('GET', '/users/lookup.json', {user_id: range.join(','), token: accessToken},  function (error, data) {
+        console.log('fetch');
+        if (error)
+          console.log('fetch_error: ' + util.inspect(error));
+        that.emit('batchdone', data);
+      });
+    }
+
+    this.on('batchdone', function(data) {console.log('batchdone: ' + data.length)});
+  }
+}
+
+FollowerFetcher.prototype = new events.EventEmitter()
 
 module.exports = {
   User: User,
-  getUserFromRedis: getUserFromRedis,
-  getUsersByIds: getUsersByIds
+  getUser: getUser,
+  lookUpUsers: lookUpUsers
 };
