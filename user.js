@@ -8,7 +8,7 @@ util = require("util");
 GLOBAL = {};
 GLOBAL._ = _;
 
-function addDiff(key, type, diff) {
+function addDiff(type, diff, key) {
   var timeStamp = new Date().getTime();
   for (i in diff){
     redis.zadd('diff:' + key, timeStamp, type + diff[i]);
