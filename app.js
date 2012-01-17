@@ -2,9 +2,11 @@ var express = require("express"),
 tc = require("./credentials").twitter;
 everyauth = require("everyauth"),
 server = express.createServer(),
-User = require("./user");
+users = require("./user");
 io = require("socket.io"),
 jade = require("jade");
+
+var User = users.User;
 
 var util = require('util');
 var user, port;
@@ -15,8 +17,9 @@ everyauth.twitter
 .consumerSecret(tc.secret)
 .callbackPath("/auth/twitter/callback")
 .findOrCreateUser(function (session, accessToken, accessTokenSecret, metadata) {
-  user = User.createUser(metadata);
+  user = new User(metadata);
   user.setAccessToken(accessToken, accessTokenSecret);
+  user.store();
   user.getFollowers();
   return metadata;
 })
@@ -33,9 +36,8 @@ server.use(everyauth.middleware());
 server.set('view engine', 'jade');
 
 server.get("/", function(req, res, next) {
-  var twitter_info, auth_hash;
+  var twitter_info, auth_hash, params;
   if (req.session.auth) {
-    var params;
     twitter_info = req.session.auth.twitter;
     user_info = twitter_info.user;
     params = {
@@ -57,5 +59,5 @@ server.get("/:view_id", function(req, res, next) {
 
 io.listen(server);
 
-port = process.argv[2] || 3000;
+port = process.argv[2] || 4000;
 server.listen(port);
