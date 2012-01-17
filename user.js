@@ -104,12 +104,19 @@ User.prototype.store = function () {
   }
 };
 
-User.prototype.followerIds = function () {
+User.prototype.followersData = function () {
   var that = this;
+  var ff = new FollowerFetcher();
+  var u;
   followerIds(this.screen_name, function(values){
-    var ff = new FollowerFetcher();
     ff.fetch(values, that.getTokenPair());
   })
+  ff.on('done', function (followers) {
+    followers.forEach(function(f) {
+      u = new User(f);
+      u.store();
+    });
+  });
 }
 
 User.prototype.getFollowers = function() {
@@ -166,6 +173,7 @@ function FollowerFetcher() {
     var range;
     var accessToken = this.accessToken || token;
     var that = this;
+    var results = [];
 
     for (var i = 0; i < times; i += 99) {
       range = ids.slice(i, i + 99);
@@ -177,7 +185,12 @@ function FollowerFetcher() {
       });
     }
 
-    this.on('batchdone', function(data) {console.log('batchdone: ' + data.length)});
+    this.on('batchdone', function(data) {
+      results = results.concat(data);
+      if (results.length === times) {
+        that.emit('done', results);
+      }
+    });
   }
 }
 
