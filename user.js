@@ -1,7 +1,7 @@
 var tc = require("./credentials").twitter,
 twitter = require("twitter-js")(tc.key, tc.secret),
 redis = require("redis").createClient(),
-events = require("events")
+events = require("events"),
 _ = require("underscore"),
 util = require("util");
 
@@ -23,14 +23,6 @@ function followerIds(screen_name, cb) {
         cb(values);
       });
     }
-  });
-}
-
-function followers(screen_name) {
-  followerIds(screen_name, function (values) {
-    values.forEach(function(value, index) {
-
-    });
   });
 }
 
