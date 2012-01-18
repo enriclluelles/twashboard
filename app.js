@@ -23,12 +23,12 @@ everyauth.twitter
   .redirectPath('/');
 
 
-server.use(express.favicon());
-server.use(express.bodyParser());
-server.use('/',express.static(__dirname + '/public'));
-server.use(express.cookieParser());
-server.use(express.session({secret: 'secret'}));
-server.use(everyauth.middleware());
+server.use(express.favicon())
+  .use(express.bodyParser())
+  .use('/',express.static(__dirname + '/public'))
+  .use(express.cookieParser())
+  .use(express.session({secret: 'secret'}))
+  .use(everyauth.middleware());
 
 server.set('view engine', 'jade');
 
