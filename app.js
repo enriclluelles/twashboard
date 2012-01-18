@@ -48,5 +48,5 @@ server.get("/:view_id", function(req, res, next) {
 });
 
 
-port = process.argv[2] || 4000;
+port = process.env.PORT || 4000;
 server.listen(port);
