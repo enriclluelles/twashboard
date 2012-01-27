@@ -1,5 +1,5 @@
 {
-  "name": "Twashboard",
+  "name": "twashboard",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -8,6 +8,7 @@
     "jade": "0.x.x",
     "redis": "0.6.x",
     "twitter-js": "0.0.x",
-    "underscore": "1.2.x"
+    "underscore": "1.2.x",
+    "socket.io": "0.8.x"
   }
 }

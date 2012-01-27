@@ -4,6 +4,7 @@ var express = require("express")
   , server = express.createServer()
   , User = require("./lib/user").User
   , util = require('util')
+  , io = require('socket.io').listen(server)
   , jade = require("jade");
 
 var user, port;
@@ -17,7 +18,9 @@ everyauth.twitter
     user = new User(metadata);
     user.setAccessToken(accessToken, accessTokenSecret);
     user.store();
-    user.getFollowers();
+    user.getFollowers(function (followers) {
+      io.emit('followers', followers);
+    });
     return metadata;
   })
   .redirectPath('/');
@@ -46,6 +49,7 @@ server.get("/", function(req, res, next) {
 server.get("/:view_id", function(req, res, next) {
   res.render(req.param("view_id"));
 });
+
 
 
 port = process.env.PORT || 4000;
