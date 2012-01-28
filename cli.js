@@ -1,10 +1,11 @@
 var users = require("./lib/user");
 var _ = require('underscore');
 var util = require('util');
+var auser;
 users.getUser('enriclluelles',function(u){
-  u.getFollowersData(function(fs){
-    var names = _.map(fs, function(fl) {return fl.screen_name})
-    console.log(names);
+  auser = u;
+  auser.followerHistory(function (followers) {
+    console.log(followers);
     process.exit();
   });
 });

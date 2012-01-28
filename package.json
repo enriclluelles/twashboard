@@ -9,6 +9,8 @@
     "redis": "0.6.x",
     "twitter-js": "0.0.x",
     "underscore": "1.2.x",
-    "socket.io": "0.8.x"
+    "connect": "1.x",
+    "socket.io": "0.8.x",
+    "moment": "1.3.x"
   }
 }
