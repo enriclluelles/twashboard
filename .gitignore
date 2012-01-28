@@ -1,3 +1,3 @@
 node_modules
-conf/credentials.js
+conf.js
 dump.rdb

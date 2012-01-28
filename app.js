@@ -1,8 +1,10 @@
 var express = require("express")
-  , tc = require("./conf/credentials").twitter
+  , conf = require("./conf")
+  , tc = conf.twitter
   , everyauth = require("everyauth")
   , server = express.createServer()
-  , User = require("./lib/user").User
+  , users = require("./lib/user")
+  , User = users.User
   , util = require('util')
   , io = require('socket.io').listen(server)
   , jade = require("jade");
@@ -23,26 +25,30 @@ everyauth.twitter
     });
     return metadata;
   })
-  .redirectPath('/');
+  .redirectPath('/dashboard');
 
 
 server.use(express.favicon())
   .use(express.bodyParser())
   .use('/',express.static(__dirname + '/public'))
   .use(express.cookieParser())
-  .use(express.session({secret: 'secret'}))
+  .use(express.session({secret: conf.session.secret}))
   .use(everyauth.middleware());
 
 server.set('view engine', 'jade');
 
-server.get("/", function(req, res, next) {
-  var twitter_info, auth_hash;
+server.get("/", function (req, res, next) {
+  res.render("index");
+});
+
+server.get("/dashboard", function(req, res, next) {
   if (req.session.auth) {
     twitter_info = req.session.auth.twitter;
+    console.log(util.inspect(req));
     user_info = twitter_info.user;
-    res.render("index", {full_name: user_info.name, followers: user_info.followers_count});
+    res.render("dashboard", {full_name: user_info.name, followers: user_info.followers_count});
   }else{
-    res.render("index", {full_name: null, followers: null});
+    res.redirect("/")
   }
 });
 
