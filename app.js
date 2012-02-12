@@ -3,11 +3,13 @@ var express = require("express")
   , tc = conf.twitter
   , everyauth = require("everyauth")
   , server = express.createServer()
-  , users = require("./lib/user")
+  , redis = require("./lib/redis")
+  , users = require("./lib/user")(redis)
   , User = users.User
   , util = require('util')
   , io = require('socket.io').listen(server)
   , connect = require('connect')
+  , RedisStore = require('connect-redis')(connect)
   , moment = require('moment')
   , jade = require("jade");
 
@@ -25,7 +27,7 @@ everyauth.twitter
   })
   .redirectPath('/dashboard');
 
-sessionStore = new express.session.MemoryStore();
+sessionStore = new RedisStore({client: redis});
 
 server.use(express.favicon())
   .use(express.bodyParser())
@@ -63,14 +65,35 @@ server.get("/", function (req, res, next) {
 
 server.get("/dashboard", function(req, res, next) {
   if (req.session.auth) {
-    twitter_info = req.session.auth.twitter;
-    user_info = twitter_info.user;
-    res.render("dashboard", {
-      full_name: user_info.name,
-      followers: user_info.followers_count
+    var twitter_info = req.session.auth.twitter;
+    var user_info = twitter_info.user;
+    users.getUser(user_info.screen_name, function (user) {
+      req.session.auth.user = user;
+      res.render("dashboard", {
+        full_name: user_info.name,
+        followers: user_info.followers_count
+      });
     });
   }else{
-    res.redirect("/")
+    res.redirect("/");
+  }
+});
+
+server.get("/follower_history", function(req, res, next) {
+  if (req.session.auth.user) {
+    var user = req.session.auth.user;
+    users.getUser(user.screen_name, function (u) {
+      u.getFollowers(function () {
+        u.followerHistory(function (history) {
+          res.render("follower_history", {
+            user: u,
+            history: history
+          });
+        });
+      });
+    });
+  } else {
+    res.redirect("/");
   }
 });
 
