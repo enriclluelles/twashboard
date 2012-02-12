@@ -1,4 +1,4 @@
-var users = require("./lib/user");
+var users = require("./lib/users");
 var _ = require('underscore');
 var util = require('util');
 var auser;

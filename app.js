@@ -4,7 +4,7 @@ var express = require("express")
   , everyauth = require("everyauth")
   , server = express.createServer()
   , redis = require("./lib/redis")
-  , users = require("./lib/user")(redis)
+  , users = require("./lib/users")(redis)
   , User = users.User
   , util = require('util')
   , io = require('socket.io').listen(server)
@@ -68,7 +68,6 @@ server.get("/dashboard", function(req, res, next) {
     var twitter_info = req.session.auth.twitter;
     var user_info = twitter_info.user;
     users.getUser(user_info.screen_name, function (user) {
-      req.session.auth.user = user;
       res.render("dashboard", {
         full_name: user_info.name,
         followers: user_info.followers_count
@@ -80,7 +79,7 @@ server.get("/dashboard", function(req, res, next) {
 });
 
 server.get("/follower_history", function(req, res, next) {
-  if (req.session.auth.user) {
+  if (req.session.auth) {
     var user = req.session.auth.user;
     users.getUser(user.screen_name, function (u) {
       u.getFollowers(function () {
