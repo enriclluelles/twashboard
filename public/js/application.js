@@ -1,8 +1,6 @@
 var socket = io.connect('/');
-
-$('followers').on('click', function () {
-  socket.emit('getFollowers');
-  socket.on('followers', function (followers) {
-    console.log(followers);
+$('followers_history').click(function (e) {
+  $.get('follower_history', function (data) {
+    console.log(data);
   });
 });
