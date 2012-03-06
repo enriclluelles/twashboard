@@ -3,7 +3,4 @@ div
     div
       p= event.when
       p= event.what
-      - if (event.who)
-        p= event.who.screen_name
-      - else
-        p= event.id
+      p= event.who
