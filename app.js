@@ -79,8 +79,8 @@ server.get("/dashboard", function(req, res, next) {
 });
 
 server.get("/follower_history", function(req, res, next) {
-  if (req.session.auth) {
-    var user = req.session.auth.user;
+  if (req.session.auth && req.session.auth.twitter) {
+    var user = req.session.auth.twitter.user;
     users.getUser(user.screen_name, function (u) {
       u.getFollowers(function () {
         u.followerHistory(function (history) {
