@@ -84,6 +84,7 @@ server.get("/follower_history", function(req, res, next) {
     users.getUser(user.screen_name, function (u) {
       u.getFollowers(function () {
         u.followerHistory(function (history) {
+          console.log("Back");
           res.render("follower_history", {
             user: u,
             history: history
