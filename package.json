@@ -1,6 +1,9 @@
 {
   "name": "twashboard",
   "version": "0.0.1",
+  "engines": {
+    "node": "0.6.x"
+  },
   "private": true,
   "dependencies": {
     "everyauth": "0.2.x",
