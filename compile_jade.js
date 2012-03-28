@@ -24,7 +24,7 @@ function writeTemplates (templates) {
       fs.readFile(srcPath, 'utf-8', function (err, content) {
         rootName = file.replace('.jade', '');
         out = 'JST["' + rootName + '"] = ';
-        out += jade.compile(content, {client: true, self: true, compileDebug: false});
+        out += jade.compile(content, {client: true, compileDebug: false});
         templates.push(out);
         if (Object.keys(templates).length === files.length)
           writeTemplates(templates.join('; \n'));
