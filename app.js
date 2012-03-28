@@ -78,6 +78,18 @@ server.get("/dashboard", function(req, res, next) {
   }
 });
 
+server.get("/users", function(req, res, next) {
+  users.getAll(function (users) {
+    res.send(users);
+  });
+});
+
+server.get("/user/:id", function(req, res, next) {
+  users.getUser(req.params.id, function (user) {
+    res.send(user);
+  });
+});
+
 server.get("/follower_history", function(req, res, next) {
   if (req.session.auth && req.session.auth.twitter) {
     var user = req.session.auth.twitter.user;
