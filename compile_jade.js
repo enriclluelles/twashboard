@@ -26,6 +26,7 @@ function writeTemplates (templates) {
         out = 'JST["' + rootName + '"] = ';
         out += jade.compile(content, {client: true, compileDebug: false});
         templates.push(out);
+        //if we have processed all the templates, write the resulting file
         if (Object.keys(templates).length === files.length)
           writeTemplates(templates.join('; \n'));
       });
