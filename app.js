@@ -14,18 +14,20 @@ var express = require("express")
   , TwitterStrategy = require('passport-twitter').Strategy
   , jade = require("jade");
 
-var user, port, sessionStore;
+var port, sessionStore;
 
-passport.serializeUser(function(user, done) {
-  done(null, user);
+passport.serializeUser(function(metadata, done) {
+  done(null, metadata.id_str);
 });
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+passport.deserializeUser(function(id, done) {
+  users.getUser(id, function(user) {
+    done(null, user);
+  })
 });
 
 //TODO: Fix this, using the host of a the first request, maybe change how passport works
-var cb_host = process.env.NODE_ENV == 'production' ? 'http://localhost:4000' : 'http://twashboard.herokuapp.com'
+var cb_host = process.env.NODE_ENV != 'production' ? 'http://localhost:4000' : 'http://twashboard.herokuapp.com'
 
 passport.use(
   new TwitterStrategy({
@@ -33,11 +35,11 @@ passport.use(
     consumerSecret: tc.secret,
     callbackURL: cb_host + '/auth/twitter/callback'
   }, function (accessToken, accessTokenSecret, metadata, done) {
-    console.log(metadata);
-    user = new User(metadata._json);
+    var user = new User(metadata._json);
     user.setAccessToken(accessToken, accessTokenSecret);
-    user.store();
-    done(null, metadata);
+    user.store(function(){
+      done(null, metadata._json);
+    });
   })
 );
 
@@ -75,9 +77,8 @@ server.get("/", function (req, res, next) {
 });
 
 server.get("/dashboard", function(req, res, next) {
-  if (req.session.auth) {
-    var twitter_info = req.session.auth.twitter;
-    var user_info = twitter_info.user;
+  if (req.user) {
+    var user_info = req.user;
     users.getUser(user_info.screen_name, function (user) {
       res.render("dashboard", {
         full_name: user_info.name,
@@ -102,15 +103,13 @@ server.get("/user/:id", function(req, res, next) {
 });
 
 server.get("/follower_history", function(req, res, next) {
-  if (req.session.auth && req.session.auth.twitter) {
-    var user = req.session.auth.twitter.user;
-    users.getUser(user.screen_name, function (u) {
-      u.getFollowers(function () {
-        u.followerHistory(function (history) {
-          res.render("follower_history", {
-            user: u,
-            history: history
-          });
+  var user = req.user
+  if (user) {
+    user.getFollowers(function () {
+      user.followerHistory(function (history) {
+        res.render("follower_history", {
+          user: user,
+          history: history
         });
       });
     });
