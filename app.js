@@ -1,7 +1,7 @@
 var express = require("express")
   , conf = require("./conf")
   , tc = conf.twitter
-  , everyauth = require("everyauth")
+  , passport = require("passport")
   , server = express.createServer()
   , redis = require("./lib/redis")
   , users = require("./lib/users")(redis, conf)
@@ -11,21 +11,33 @@ var express = require("express")
   , connect = require('connect')
   , RedisStore = require('connect-redis')(connect)
   , moment = require('moment')
+  , passport = require('passport')
+  , TwitterStrategy = require('passport-twitter').Strategy
   , jade = require("jade");
 
 var user, port, sessionStore;
 
-everyauth.twitter
-  .consumerKey(tc.key)
-  .consumerSecret(tc.secret)
-  .callbackPath("/auth/twitter/callback")
-  .findOrCreateUser(function (session, accessToken, accessTokenSecret, metadata) {
-    user = new User(metadata);
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(
+  new TwitterStrategy({
+    consumerKey: tc.key,
+    consumerSecret: tc.secret,
+    callbackURL: "http://localhost:4000/auth/twitter/callback"
+  }, function (accessToken, accessTokenSecret, metadata, done) {
+    console.log(metadata);
+    user = new User(metadata._json);
     user.setAccessToken(accessToken, accessTokenSecret);
     user.store();
-    return metadata;
+    done(null, metadata);
   })
-  .redirectPath('/dashboard');
+);
 
 sessionStore = new RedisStore({client: redis});
 
@@ -37,26 +49,23 @@ server.use(express.favicon())
     secret: conf.session.secret,
     store: sessionStore
   }))
-  .use(everyauth.middleware())
+  .use(passport.initialize())
+  .use(passport.session())
   .set('view engine', 'jade');
 
-io.set('authorization', function (data, accept) {
-  if (data.headers.cookie) {
-    var sessionID = connect.utils.parseCookie(data.headers.cookie)['connect.sid'];
-    sessionStore.get(sessionID, function (err, session) {
-      if (err || !(session && session.auth)) {
-        // if we cannot grab a session, turn down the connection
-        accept('Error', false);
-      } else {
-        // save the session data and accept the connection
-        data.session = session;
-        accept(null, true);
-      }
-    });
-  } else {
-    console.log('No cookie transmitted');
-    accept('No cookie transmitted.', false);
+
+server.get('/auth/twitter', passport.authenticate('twitter'));
+
+server.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/' }),
+  function(req, res) {
+    res.redirect('/dashboard');
   }
+);
+
+server.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
 });
 
 server.get("/", function (req, res, next) {
