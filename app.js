@@ -24,11 +24,14 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+//TODO: Fix this, using the host of a the first request, maybe change how passport works
+var cb_host = process.env.NODE_ENV == 'production' ? 'http://localhost:4000' : 'http://twashboard.herokuapp.com'
+
 passport.use(
   new TwitterStrategy({
     consumerKey: tc.key,
     consumerSecret: tc.secret,
-    callbackURL: "http://localhost:4000/auth/twitter/callback"
+    callbackURL: cb_host + '/auth/twitter/callback'
   }, function (accessToken, accessTokenSecret, metadata, done) {
     console.log(metadata);
     user = new User(metadata._json);
