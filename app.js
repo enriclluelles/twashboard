@@ -7,7 +7,6 @@ var express = require("express")
   , users = require("./lib/users")(redis, conf)
   , User = users.User
   , util = require('util')
-  , io = require('socket.io').listen(server)
   , connect = require('connect')
   , RedisStore = require('connect-redis')(connect)
   , moment = require('moment')
