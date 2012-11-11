@@ -80,7 +80,11 @@ server.get('/logout', function(req, res){
 });
 
 server.get("/", function (req, res, next) {
-  res.render("index");
+  if (req.user) {
+    res.redirect('/dashboard')
+  } else {
+    res.render("index");
+  }
 });
 
 server.get("/dashboard", function(req, res, next) {
