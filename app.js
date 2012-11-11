@@ -27,21 +27,8 @@ passport.deserializeUser(function(id, done) {
 });
 
 //TODO: Fix this, using the host of a the first request, maybe change how passport works
-var cb_host = process.env.NODE_ENV != 'production' ? 'http://localhost:4000' : 'http://twashboard.herokuapp.com'
+var cb_host;
 
-passport.use(
-  new TwitterStrategy({
-    consumerKey: tc.key,
-    consumerSecret: tc.secret,
-    callbackURL: cb_host + '/auth/twitter/callback'
-  }, function (accessToken, accessTokenSecret, metadata, done) {
-    var user = new User(metadata._json);
-    user.setAccessToken(accessToken, accessTokenSecret);
-    user.store(function(){
-      done(null, metadata._json);
-    });
-  })
-);
 
 sessionStore = new RedisStore({client: redis});
 
@@ -55,7 +42,27 @@ server.use(express.favicon())
   }))
   .use(passport.initialize())
   .use(passport.session())
-  .set('view engine', 'jade');
+  .use(function(req, res, next) {
+    //We're setting the twitter callback host here
+    if (!cb_host) {
+      cb_host = 'http://' + req.headers.host
+      passport.use(
+        new TwitterStrategy({
+        consumerKey: tc.key,
+        consumerSecret: tc.secret,
+        callbackURL: cb_host + '/auth/twitter/callback'
+      }, function (accessToken, accessTokenSecret, metadata, done) {
+        var user = new User(metadata._json);
+        user.setAccessToken(accessToken, accessTokenSecret);
+        user.store(function(){
+          done(null, metadata._json);
+        });
+      })
+      );
+    }
+    next();
+  })
+  .set('view engine', 'ejs');
 
 
 server.get('/auth/twitter', passport.authenticate('twitter'));
@@ -79,11 +86,10 @@ server.get("/", function (req, res, next) {
 server.get("/dashboard", function(req, res, next) {
   if (req.user) {
     var user_info = req.user;
-    users.getUser(user_info.screen_name, function (user) {
-      res.render("dashboard", {
-        full_name: user_info.name,
-        followers: user_info.followers_count
-      });
+    res.render("dashboard", {
+      full_name: user_info.name,
+      current_followers: user_info.followers_count,
+      old_followers: user_info.followers_count - 1
     });
   }else{
     res.redirect("/");
