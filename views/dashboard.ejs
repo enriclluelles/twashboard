@@ -4,12 +4,12 @@
 
 <div class="explain_followers">
   You've got <%= current_followers %> followers on twitter<br>
-  <% if (current_followers !== old_followers) { %>
+  <% if (current_followers && old_followers && current_followers !== old_followers) { %>
     You've 
     <% if (current_followers > old_followers) { %>
-      won followers
+      won <%= current_followers - old_followers %> followers
     <% } if (current_followers < old_followers) {%>
-      lost followers
+      lost <%= old_followers - current_followers %> followers
     <% } %>
      since last time you were here
   <% } %>

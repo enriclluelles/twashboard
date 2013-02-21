@@ -28,9 +28,14 @@ passport.deserializeUser(function(id, done) {
 
 passport.createUserFromTwitter = function (accessToken, accessTokenSecret, metadata, done) {
   var user = new User(metadata._json);
-  user.setAccessToken(accessToken, accessTokenSecret);
-  user.store(function(){
-    done(null, metadata._json);
+  users.getUser(metadata._json.id_str, function(u) {
+    if (u && u.followers_count) {
+      user.old_followers_count = u.followers_count;
+    }
+    user.setAccessToken(accessToken, accessTokenSecret);
+    user.store(function(){
+      done(null, metadata._json);
+    });
   });
 };
 
@@ -95,7 +100,7 @@ server.get("/dashboard", function(req, res, next) {
     res.render("dashboard", {
       full_name: user_info.name,
       current_followers: user_info.followers_count,
-      old_followers: user_info.followers_count - 1
+      old_followers: user_info.old_followers_count
     });
   }else{
     res.redirect("/");
