@@ -1,9 +1,11 @@
 <div>
   <% history.forEach(function(event) { %>
     <div>
-      <p><%= event.when %></p>
-      <p><%= event.what %></p>
-      <p><%= event.who %></p>
-    </div>
+      <p>
+        <%= event.what %> <%= event.who %> 
+        <%= event.what == '+' ? 'started following you' : 'stopped following you' %> 
+        on <%= event.when %>
+      </p>
+  </div>
   <% }) %>
 </div>

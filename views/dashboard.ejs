@@ -1,23 +1,25 @@
 <header>
-  Hi <%= full_name %>
+  Hi <%= full_name %>!
 </header>
 
 <div class="explain_followers">
-  You've got <%= current_followers %> followers on twitter<br>
+  <p>You've got <%= current_followers %> followers on twitter.</p>
   <% if (current_followers && old_followers && current_followers !== old_followers) { %>
-    You've 
-    <% if (current_followers > old_followers) { %>
-      won <%= current_followers - old_followers %> followers
-    <% } if (current_followers < old_followers) {%>
-      lost <%= old_followers - current_followers %> followers
-    <% } %>
-     since last time you were here
+    <p>
+      You've 
+      <% if (current_followers > old_followers) { %>
+        won <%= current_followers - old_followers %> followers
+      <% } if (current_followers < old_followers) {%>
+        lost <%= old_followers - current_followers %> followers
+      <% } %>
+      since last time you were here.
+    </p>
   <% } %>
+  <p>See your <a href='/follower_history'>follower history</a></p>
+  <p><a href='/logout'>Logout</a></p>
 </div>
 
 <nav>
   <ul>
-    <li><a href='/follower_history'>Follower history</a></li>
-    <li><a href='/logout'>Logout</a></li>
   </ul>
 </nav>

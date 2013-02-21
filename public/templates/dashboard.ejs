@@ -1,0 +1,14 @@
+<header>
+  Hi <%= full_name %>
+</header>
+
+<div class="explain_followers">
+You've got <%= current_followers %> on twitter<br>
+<% if (current_followers > old_followers) { %>
+Won followers
+<% } if (current_followers < old_followers) {%>
+Lost followers
+<% }if (current_followers == old_followers) {%>
+Stayed equal
+<% } %>
+</div>
