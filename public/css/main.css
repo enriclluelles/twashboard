@@ -1,0 +1,14 @@
+html, body {
+  height: 100%;
+}
+
+body {
+ background-image: -webkit-linear-gradient(top, #ffffff,rgba(255,255,255,0));
+ background-color: rgba(200,200,200,1);
+ font-family: museo-sans, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+#container {
+  width: 800px;
+  margin: auto;
+}
