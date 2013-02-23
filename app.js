@@ -3,7 +3,7 @@ var express = require("express")
   , tc = conf.twitter
   , passport = require("passport")
   , server = express.createServer()
-  , redis = require("./lib/redis")
+  , redis = require("./lib/redis_manager")
   , users = require("./lib/users")(redis, conf)
   , User = users.User
   , util = require('util')
@@ -135,6 +135,7 @@ server.get("/follower_history", function(req, res, next) {
   }
 });
 
+//Fallback for static pages
 server.get("/:view_id", function(req, res, next) {
   res.render(req.param("view_id"));
 });
