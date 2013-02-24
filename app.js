@@ -12,9 +12,8 @@ var express = require("express")
   , moment = require('moment')
   , passport = require('passport')
   , TwitterStrategy = require('passport-twitter').Strategy
-  , jade = require("jade");
-
-var port, sessionStore;
+  , jade = require("jade")
+  , sessionStore = new RedisStore({client: redis});
 
 passport.serializeUser(function(metadata, done) {
   done(null, metadata.id_str);
@@ -43,7 +42,6 @@ passport.createUserFromTwitter = function (accessToken, accessTokenSecret, metad
 var cb_host;
 
 
-sessionStore = new RedisStore({client: redis});
 
 server.use(express.favicon())
   .use(express.bodyParser())
@@ -140,5 +138,4 @@ server.get("/:view_id", function(req, res, next) {
   res.render(req.param("view_id"));
 });
 
-port = process.env.PORT || 4000;
-server.listen(port);
+server.listen(process.env.PORT || 4000);
