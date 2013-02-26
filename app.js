@@ -117,6 +117,15 @@ server.get("/user/:id", function(req, res, next) {
   });
 });
 
+server.get("/stalk", function(req, res, next) {
+  var user = req.user
+  if (user) {
+    user.stalk(req.query.who);
+  } else {
+    res.redirect("/");
+  }
+});
+
 server.get("/follower_history", function(req, res, next) {
   var user = req.user
   if (user) {
