@@ -95,6 +95,13 @@ server.get("/", function (req, res, next) {
 server.get("/dashboard", function(req, res, next) {
   if (req.user) {
     var user_info = req.user;
+
+    if (!user.areFollowersRecent()) {
+      if (!user.lastFollowersDataRetrieved) {
+        user.getFollowers();
+      }
+    }
+
     res.render("dashboard", {
       full_name: user_info.name,
       current_followers: user_info.followers_count,
@@ -128,13 +135,12 @@ server.get("/stalk", function(req, res, next) {
 
 server.get("/follower_history", function(req, res, next) {
   var user = req.user
-  if (user) {
-    user.getFollowers(function () {
-      user.followerHistory(function (history) {
-        res.render("follower_history", {
-          user: user,
-          history: history
-        });
+  console.log(user);
+  if (user && user.lastFollowersRetrieved) {
+    user.followerHistory(function (history) {
+      res.render("follower_history", {
+        user: user,
+        history: history
       });
     });
   } else {
