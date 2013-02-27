@@ -110,12 +110,13 @@ server.get("/dashboard", function(req, res, next) {
     }
   }
 
-  res.render("dashboard", {
+  res.render("dashboard.jade", {
     full_name: user.name,
     first_time_user: firstTimeUser,
     followers_fetched_recently: user.areFollowersRecent(),
     current_followers: user.followers_count,
-    old_followers: user.old_followers_count
+    old_followers: user.old_followers_count,
+    layout: 'layout.ejs'
   });
 });
 
