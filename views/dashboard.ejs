@@ -4,22 +4,25 @@
 
 <div class="explain_followers">
   <p>You've got <%= current_followers %> followers on twitter.</p>
-  <% if (current_followers && old_followers && current_followers !== old_followers) { %>
-    <p>
-      You've 
-      <% if (current_followers > old_followers) { %>
-        won <%= current_followers - old_followers %> followers
-      <% } if (current_followers < old_followers) {%>
-        lost <%= old_followers - current_followers %> followers
-      <% } %>
-      since last time you were here.
-    </p>
+  <% if (first_time_user) { %>
+    <p>It looks like it's your first time visiting this site.</p>
+    <% if (current_followers > 75000) { %>
+      <p>You've got a large number of followers, it will take a while to fetch them all</p>
+    <% } %>
+  <% } else { %>
+    <% if (current_followers && old_followers && current_followers !== old_followers) { %>
+      <p>
+        You've 
+        <% if (current_followers > old_followers) { %>
+          won <%= current_followers - old_followers %> followers
+        <% } if (current_followers < old_followers) {%>
+          lost <%= old_followers - current_followers %> followers
+        <% } %>
+        since last time you were here.
+      </p>
+    <% } %>
   <% } %>
-  <p>See your <a href='/follower_history'>follower history</a></p>
-  <p><a href='/logout'>Logout</a></p>
-</div>
-
-<nav>
-  <ul>
-  </ul>
-</nav>
+  <% if (followers_fetched_recently) { %><div><% } else { %><div stlye="display: none"><% } %>
+      <p>See your <a href='/follower_history'>follower history</a></p>
+      <p><a href='/logout'>Logout</a></p>
+    </div>
