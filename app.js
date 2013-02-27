@@ -54,6 +54,13 @@ server.use(express.favicon())
   .use(passport.initialize())
   .use(passport.session())
   .use(function(req, res, next) {
+    if (!req.user) {
+      res.redirect("/");
+    } else {
+      next();
+    }
+  })
+  .use(function(req, res, next) {
     //We're setting the twitter callback host here
     if (!cb_host) {
       cb_host = 'http://' + req.headers.host
@@ -93,23 +100,22 @@ server.get("/", function (req, res, next) {
 });
 
 server.get("/dashboard", function(req, res, next) {
-  if (req.user) {
-    var user_info = req.user;
+  var user = req.user
+  , firstTimeUser = !user.lastFollowersRetrieved
 
-    if (!user.areFollowersRecent()) {
-      if (!user.lastFollowersDataRetrieved) {
-        user.getFollowers();
-      }
+  if (!user.areFollowersRecent()) {
+    if (firstTimeUser) {
+      user.getFollowers();
     }
-
-    res.render("dashboard", {
-      full_name: user_info.name,
-      current_followers: user_info.followers_count,
-      old_followers: user_info.old_followers_count
-    });
-  }else{
-    res.redirect("/");
   }
+
+  res.render("dashboard", {
+    full_name: user.name,
+    first_time_user: firstTimeUser,
+    followers_fetched_recently: user.areFollowersRecent(),
+    current_followers: user.followers_count,
+    old_followers: user.old_followers_count
+  });
 });
 
 server.get("/users", function(req, res, next) {
@@ -124,27 +130,27 @@ server.get("/user/:id", function(req, res, next) {
   });
 });
 
+
 server.get("/stalk", function(req, res, next) {
+  res.render('stalk');
+});
+
+server.post("/stalk", function(req, res, next) {
   var user = req.user
-  if (user) {
-    user.stalk(req.query.who);
-  } else {
-    res.redirect("/");
-  }
+  user.stalk(req.body.who, function(){
+    res.send('ok');
+  });
 });
 
 server.get("/follower_history", function(req, res, next) {
   var user = req.user
-  console.log(user);
-  if (user && user.lastFollowersRetrieved) {
+  if (user.lastFollowersRetrieved) {
     user.followerHistory(function (history) {
       res.render("follower_history", {
         user: user,
         history: history
       });
     });
-  } else {
-    res.redirect("/");
   }
 });
 
