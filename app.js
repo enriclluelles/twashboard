@@ -43,9 +43,10 @@ var cb_host;
 
 
 
-server.use(express.favicon())
-  .use(express.bodyParser())
+server
   .use('/',express.static(__dirname + '/public'))
+  .use(express.favicon())
+  .use(express.bodyParser())
   .use(express.cookieParser())
   .use(express.session({
     secret: conf.session.secret,
@@ -54,10 +55,10 @@ server.use(express.favicon())
   .use(passport.initialize())
   .use(passport.session())
   .use(function(req, res, next) {
-    if (!req.user) {
-      res.redirect("/");
-    } else {
+    if (req.user || req.url.match(/^(\/|\/auth\/.*)$/)) {
       next();
+    } else {
+      res.redirect('/');
     }
   })
   .use(function(req, res, next) {
