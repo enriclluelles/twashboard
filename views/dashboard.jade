@@ -11,10 +11,10 @@ header Hi #{full_name}!
   - if (current_followers && old_followers && current_followers !== old_followers)
     p You've 
      - if (current_followers > old_followers)
-       | won #{current_followers - old_followers}
-     - if (current_followers > old_followers)
-       | lost #{old_followers - current_followers} followers
-     | since last time you were here.
+       | won #{current_followers - old_followers} followers 
+     - if (current_followers < old_followers)
+       | lost #{old_followers - current_followers} followers 
+     | since the last time you were here.
 
   div(style=(followers_fetched_recently ? 'display: none' : ''))
     p See your 
