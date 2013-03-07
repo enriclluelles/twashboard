@@ -22,7 +22,7 @@ passport.serializeUser(function(metadata, done) {
 passport.deserializeUser(function(id, done) {
   users.getUser(id, function(user) {
     done(null, user);
-  })
+  });
 });
 
 passport.createUserFromTwitter = function (accessToken, accessTokenSecret, metadata, done) {
@@ -64,7 +64,7 @@ server
   .use(function(req, res, next) {
     //We're setting the twitter callback host here
     if (!cb_host) {
-      cb_host = 'http://' + req.headers.host
+      cb_host = 'http://' + req.headers.host;
       passport.use(
         new TwitterStrategy({
           consumerKey: tc.key,
@@ -94,7 +94,7 @@ server.get('/logout', function(req, res){
 
 server.get("/", function (req, res, next) {
   if (req.user) {
-    res.redirect('/dashboard')
+    res.redirect('/dashboard');
   } else {
     res.render("index");
   }
@@ -102,7 +102,7 @@ server.get("/", function (req, res, next) {
 
 server.get("/dashboard", function(req, res, next) {
   var user = req.user
-  , firstTimeUser = !user.lastFollowersRetrieved
+  , firstTimeUser = !user.lastFollowersRetrieved;
 
   if (!user.areFollowersRecent()) {
     if (firstTimeUser) {
@@ -110,7 +110,7 @@ server.get("/dashboard", function(req, res, next) {
     }
   }
 
-  res.render("dashboard.jade", {
+  res.send({
     full_name: user.name,
     first_time_user: firstTimeUser,
     followers_fetched_recently: user.areFollowersRecent(),
@@ -138,17 +138,17 @@ server.get("/stalk", function(req, res, next) {
 });
 
 server.post("/stalk", function(req, res, next) {
-  var user = req.user
+  var user = req.user;
   user.stalk(req.body.who, function(){
     res.send('ok');
   });
 });
 
 server.get("/follower_history", function(req, res, next) {
-  var user = req.user
+  var user = req.user;
   if (user.lastFollowersRetrieved) {
     user.followerHistory(function (history) {
-      res.render("follower_history", {
+      res.send({
         user: user,
         history: history
       });
