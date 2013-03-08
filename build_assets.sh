@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+
 rm -rf ./public/js/*
-# convert commonjs-style to amd
+mkdir -p ./public/js
 
 pushd ./public/js > /dev/null
 ../../node_modules/requirejs/bin/r.js -convert ../../public_src/js .
