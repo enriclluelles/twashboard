@@ -156,6 +156,10 @@ server.get("/follower_history", function(req, res, next) {
   }
 });
 
+server.get("/user", function(req, res, next) {
+  res.send(req.user);
+});
+
 //Fallback for static pages
 server.get("/:view_id", function(req, res, next) {
   res.render(req.param("view_id"));
