@@ -104,15 +104,12 @@ server.get("/dashboard", function(req, res, next) {
   var user = req.user
   , firstTimeUser = !user.lastFollowersRetrieved;
 
-  if (!user.areFollowersRecent()) {
-    if (firstTimeUser) {
-      user.getFollowers();
-    }
-  }
+  console.log(user.areFollowersRecent());
+  // if (!user.areFollowersRecent()) {
+    user.getFollowers();
+  // }
 
-  res.render('blank.jade', {
-    layout: 'layout.ejs'
-  });
+  res.render('blank.ejs');
 });
 
 server.get("/stalk", function(req, res, next) {
@@ -141,7 +138,7 @@ server.get("/user", function(req, res, next) {
 
 //Fallback for static pages
 server.all("*", function(req, res, next) {
-  res.render('blank.jade', {layout: 'layout.ejs'});
+  res.render('blank.ejs');
 });
 
 server.listen(process.env.PORT || 4000);

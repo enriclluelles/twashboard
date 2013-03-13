@@ -2,3 +2,4 @@ node_modules
 conf.js
 dump.rdb
 public/js
+.app_pid
