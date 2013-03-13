@@ -1,12 +1,12 @@
 var jade = require('jade')
   , ejs = require('ejs')
-  , srcDir = __dirname + '/public/templates'
+  , srcDir = __dirname + '/assets/templates'
   , dstPath = __dirname + '/public/js/templates.js'
   , util = require('util')
   , fs = require('fs');
 
 function writeTemplates (templates) {
-  var out = '(function () {\n'
+  var out = '(function () {\n';
   out += 'this.JST = this.JST || {};\n';
   out += '' + templates;
   out += '\n})()';

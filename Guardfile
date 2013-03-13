@@ -12,5 +12,6 @@ guard 'shell' do
       exec "node app.js"
     end
   end
-  watch(/^public_src\/.*\.js$/) {|m| `./build_assets.sh`}
+  watch(/^assets\/.*\.js$/) {|m| `./build_assets.sh`; `node compile_templates.js`}
+  watch(/^assets\/templates\/.*$/) {|m| `node compile_templates.js`}
 end

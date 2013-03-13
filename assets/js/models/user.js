@@ -1,4 +1,6 @@
-var Backbone = require('backbone');
-var User = module.exports = Backbone.model.extend({
-  url: '/user'
+module.exports = Backbone.Model.extend({
+  url: '/user',
+  isFirstTimeUser: function () {
+    return !this.get('lastFollowersRetrieved');
+  }
 });

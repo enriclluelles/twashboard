@@ -110,28 +110,10 @@ server.get("/dashboard", function(req, res, next) {
     }
   }
 
-  res.send({
-    full_name: user.name,
-    first_time_user: firstTimeUser,
-    followers_fetched_recently: user.areFollowersRecent(),
-    current_followers: user.followers_count,
-    old_followers: user.old_followers_count,
+  res.render('blank.jade', {
     layout: 'layout.ejs'
   });
 });
-
-server.get("/users", function(req, res, next) {
-  users.getAll(function (users) {
-    res.send(users);
-  });
-});
-
-server.get("/user/:id", function(req, res, next) {
-  users.getUser(req.params.id, function (user) {
-    res.send(user);
-  });
-});
-
 
 server.get("/stalk", function(req, res, next) {
   res.render('stalk');
@@ -144,14 +126,11 @@ server.post("/stalk", function(req, res, next) {
   });
 });
 
-server.get("/follower_history", function(req, res, next) {
+server.get("/follow_history", function(req, res, next) {
   var user = req.user;
   if (user.lastFollowersRetrieved) {
     user.followerHistory(function (history) {
-      res.send({
-        user: user,
-        history: history
-      });
+      res.send(history);
     });
   }
 });
@@ -161,8 +140,8 @@ server.get("/user", function(req, res, next) {
 });
 
 //Fallback for static pages
-server.get("/:view_id", function(req, res, next) {
-  res.render(req.param("view_id"));
+server.all("*", function(req, res, next) {
+  res.render('blank.jade', {layout: 'layout.ejs'});
 });
 
 server.listen(process.env.PORT || 4000);

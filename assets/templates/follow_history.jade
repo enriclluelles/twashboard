@@ -1,0 +1,6 @@
+div
+  each event in events.models
+    div
+      p #{event.get('what')} #{event.get('who')} 
+        | #{event.get('what') == '+' ? 'started following you' : 'stopped following you'} 
+        | on #{event.get('when')}
