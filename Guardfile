@@ -16,7 +16,7 @@ guard 'shell' do
   watch(/^assets\/js\/vendor\.js$/) {|m| `./node_modules/.bin/browserify assets/js/vendor.js > public/js/vendor.js`; puts 'vendor'}
   watch(/^assets\/templates\/.*$/) {|m| `node compile_templates.js`; puts 'templates'}
   watch(/^assets\/sass\/.*$/) do |m|
-    `cd assets/sass && ../../node_modules/.bin/node-sass main.sass`
+    puts `cd assets/sass && ../../node_modules/.bin/node-sass main.sass`
     `mv ./assets/sass/nodesass.css ./public/css/main.css`
     puts 'sass'
   end
