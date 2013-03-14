@@ -1,15 +1,57 @@
-html, body {
-  height: 100%;
-}
+@import 'normalize.sass';
 
 body {
- background-image: -webkit-linear-gradient(top, #ffffff,rgba(255,255,255,0));
+  background-image: -webkit-linear-gradient(top, #ffffff,rgba(255,255,255,0));
  background-color: rgba(200,200,200,1);
  font-family: museo-sans, 'Helvetica Neue', Helvetica, Arial, sans-serif;
  background-attachment: fixed;
+ margin-top: 0px;
 }
 
-#container {
-  width: 800px;
+body, html {
+  height: 100%;
+}
+
+#container{
   margin: auto;
+  width: 880px;
+}
+
+header {
+  margin-top: 0px;
+  background-color: black;
+  #header-wrapper {
+    width: 950px;
+    margin: auto;
+    height: 40px;
+    position: relative;
+
+  h1 {
+    margin-top: 0;
+    color: white;
+    font-weight: normal;
+    padding-left: 10px;
+    display: block;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+  }
+
+  #sign-in-button-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    height: 40px;
+    #sign-in-button {
+      height: 28px;
+      display: block;
+    }
+  }
+
+  #buttons {
+    right: 0px;
+    top: 0px;
+    position: absolute;
+  }
+  }
+
 }

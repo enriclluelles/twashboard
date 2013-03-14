@@ -4,12 +4,22 @@
     <link href="http://fonts.googleapis.com/css?family=Leckerli+One|VT323" rel="stylesheet" type="text/css"/>
     <meta charset="utf-8">
     <title>Twashboard</title>
-    <script src="/js/vendor/jade-runtime.js"></script>
     <link href="/css/main.css" media="all" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <header>
+      <div id="header-wrapper">
+        <h1>Tw<b>ashboard</b></h1>
+        <div id="buttons">
+          <div id="sign-in-button-wrapper">
+            <a id="sign-in-button" href="/auth/twitter">
+              <img src="/img/sign-in-with-twitter-gray.png" alt="Sign in with twitter" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
     <div id="container">
-      <h1>Twashboard</h1>
       <div id="main">
         <%- body %>
       </div>
