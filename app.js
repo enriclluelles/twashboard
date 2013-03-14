@@ -105,9 +105,9 @@ server.get("/dashboard", function(req, res, next) {
   , firstTimeUser = !user.lastFollowersRetrieved;
 
   console.log(user.areFollowersRecent());
-  // if (!user.areFollowersRecent()) {
+  if (!user.areFollowersRecent()) {
     user.getFollowers();
-  // }
+  }
 
   res.render('blank.ejs');
 });
