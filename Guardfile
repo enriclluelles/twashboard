@@ -7,7 +7,7 @@
 guard 'shell' do
   watch(/^(app.js|lib.*\.js)$/) do
     pid_to_kill = File.read('.app_pid') rescue nil
-    Process.kill("KILL", pid_to_kill.to_i) if pid_to_kill
+    Process.kill("KILL", pid_to_kill.to_i) rescue nil
     pid_to_save = Process.spawn("node app.js")
     File.write('.app_pid', pid_to_save)
   end
