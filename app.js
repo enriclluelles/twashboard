@@ -96,31 +96,20 @@ server.get("/", function (req, res, next) {
   if (req.user) {
     res.redirect('/dashboard');
   } else {
-    res.render("index");
+    res.render("logged_out", {layout: false});
   }
 });
 
 server.get("/dashboard", function(req, res, next) {
   var user = req.user
-  , firstTimeUser = !user.lastFollowersRetrieved;
+    , firstTimeUser = !user.lastFollowersRetrieved;
 
   console.log(user.areFollowersRecent());
   if (!user.areFollowersRecent()) {
     user.getFollowers();
   }
 
-  res.render('blank.ejs');
-});
-
-server.get("/stalk", function(req, res, next) {
-  res.render('stalk');
-});
-
-server.post("/stalk", function(req, res, next) {
-  var user = req.user;
-  user.stalk(req.body.who, function(){
-    res.send('ok');
-  });
+  res.render("logged_in", {layout: false});
 });
 
 server.get("/follow_history", function(req, res, next) {
@@ -138,7 +127,7 @@ server.get("/user", function(req, res, next) {
 
 //Fallback for static pages
 server.all("*", function(req, res, next) {
-  res.render('blank.ejs');
+  res.render("logged_in", {layout: false});
 });
 
 server.listen(process.env.PORT || 4000);
