@@ -3,7 +3,7 @@ var Twashboard = window.Twashboard = {
   collections: {}
 }
 
-_.extend(Twashboard, {
+_.e(Twashboard, {
   Models: require('./models'),
   Collections: require('./collections'),
   Router: require('./router'),

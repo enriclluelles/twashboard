@@ -1,7 +1,7 @@
-@import 'normalize.sass';
+@import 'bourbon/bourbon.scss';
 
 body {
-  background-image: -webkit-linear-gradient(top, #ffffff,rgba(255,255,255,0));
+ background-image: -webkit-linear-gradient(top, #ffffff,rgba(255,255,255,0));
  background-color: rgba(200,200,200,1);
  font-family: museo-sans, 'Helvetica Neue', Helvetica, Arial, sans-serif;
  background-attachment: fixed;
@@ -10,6 +10,7 @@ body {
 
 body, html {
   height: 100%;
+  margin: 0;
 }
 
 #container{
@@ -41,10 +42,10 @@ header {
     display: table-cell;
     vertical-align: middle;
     height: 40px;
-    #sign-in-button {
-      height: 28px;
-      display: block;
-    }
+
+    #sign-out-button, #sign-in-button {
+      @include button(pill);
+    };
   }
 
   #buttons {
