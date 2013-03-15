@@ -8,6 +8,7 @@ var express = require("express")
   , User = users.User
   , util = require('util')
   , connect = require('connect')
+  , sass = require('node-sass')
   , RedisStore = require('connect-redis')(connect)
   , moment = require('moment')
   , passport = require('passport')
@@ -44,6 +45,13 @@ var cb_host;
 
 
 server
+  .use(
+    sass.middleware({
+      src: __dirname + '/assets'
+      , dest: __dirname + '/public'
+      , debug: true
+    })
+  )
   .use('/',express.static(__dirname + '/public'))
   .use(express.favicon())
   .use(express.bodyParser())
